@@ -38,7 +38,7 @@ public class OmniTeleop extends OpMode {
     public void loop() {
         normalDrive();
         grippers();
-        telemetry.addData("Motors", "Back Left (%.2f), Front Left (%.2f), Back Right (%.2f), Back Left (%.2f)",rawBL, rawFL, rawBR, rawFR  );
+        telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) | (%.2f)",rawFL, rawFR, rawBL, rawBR  );
         //testDrive();
     }
 
