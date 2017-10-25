@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
-import static java.util.logging.Logger.global;
 
 
 @TeleOp(name = "OmniBot")
@@ -18,6 +19,7 @@ public class OmniTeleop extends OpMode {
     private double rawFL, rawFR, rawBL, rawBR;
 
     private boolean gripper;
+    private boolean x=true;
 
     @Override
     public void init() {
@@ -65,20 +67,8 @@ public class OmniTeleop extends OpMode {
 
     private void grippers(){
         //Gripper Servos
-        if (gamepad1.a){
-            gripper = !gripper;
-        }
 
-        if(gripper){
-            gripperLeft.setPosition(1);
-            gripperRight.setPosition(0);
-
-        }
-        else{
-            gripperLeft.setPosition(.5);
-            gripperRight.setPosition(.5);
-
-        }
+        toggleGripper(gamepad1.a);
 
         if (gamepad1.x){
             gripperLeft.setPosition(1);
@@ -116,11 +106,60 @@ public class OmniTeleop extends OpMode {
             backRight.setPower(0);
         }
     }
-    private void totallyRealGUI(){
-        if(rawFL>0) {
-            telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) | (%.2f)", rawFL, rawFR, rawBL, rawBR);
+    private void totallyRealGUI() {
+        if (rawFL > 0) {
+            if (rawFR > 0) {
+                if (rawBL > 0) {
+                    if (rawBR > 0) {
+                        telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) | (%.2f)", rawFL, rawFR, rawBL, rawBR);
+                    }
+                        else{
+                            telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) |(%.2f)", rawFL, rawFR, rawBL, rawBR);
+                        }
+                    if (rawBR > 0) {
+                        telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) | (%.2f)", rawFL, rawFR, rawBL, rawBR);
+                    }
+                    else{
+                        telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) |(%.2f)", rawFL, rawFR, rawBL, rawBR);
+                    }
 
+                }
+            }
 
-
+        }
     }
+    private void toggleGripper(boolean Pressed){
+        double GL = gripperLeft.getPosition();
+        double GR = gripperRight.getPosition();
+
+        if(Pressed && x){
+            x=false;
+            if (GL == .5){
+                gripperLeft.setPosition(1);
+                gripperRight.setPosition(0);
+            }
+            else if( GL == 1) {
+                gripperLeft.setPosition(.5);
+                gripperRight.setPosition(.5);
+            }
+        }
+        if(!Pressed){
+            x=true;
+        }
+
+        /*
+        if (newValue != gripper){
+            if (gripper && GL != 1.00){
+                gripperLeft.setPosition(1);
+                gripperRight.setPosition(0);
+            } else if( GR != 0.5) {
+                gripperLeft.setPosition(.5);
+                gripperRight.setPosition(.5);
+            }
+        }
+
+        gripper = newValue;
+*/
+    }
+
 }
