@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
+import static java.util.logging.Logger.global;
+
 
 @TeleOp(name = "OmniBot")
 public class OmniTeleop extends OpMode {
@@ -11,11 +13,11 @@ public class OmniTeleop extends OpMode {
     private DcMotor frontLeft, frontRight, backLeft, backRight;
     private Servo gripperLeft, gripperRight;
 
-    double forwardVector, strafeVector, rotate;
+    private double forwardVector, strafeVector, rotate;
 
-    double rawFL, rawFR, rawBL, rawBR;
+    private double rawFL, rawFR, rawBL, rawBR;
 
-
+    private boolean gripper;
 
     @Override
     public void init() {
@@ -38,8 +40,8 @@ public class OmniTeleop extends OpMode {
     public void loop() {
         normalDrive();
         grippers();
-        telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) | (%.2f)",rawFL, rawFR, rawBL, rawBR  );
-        //testDrive();
+
+            //testDrive();
     }
 
     private void normalDrive() {
@@ -63,6 +65,21 @@ public class OmniTeleop extends OpMode {
 
     private void grippers(){
         //Gripper Servos
+        if (gamepad1.a){
+            gripper = !gripper;
+        }
+
+        if(gripper){
+            gripperLeft.setPosition(1);
+            gripperRight.setPosition(0);
+
+        }
+        else{
+            gripperLeft.setPosition(.5);
+            gripperRight.setPosition(.5);
+
+        }
+
         if (gamepad1.x){
             gripperLeft.setPosition(1);
             gripperRight.setPosition(0);
@@ -98,5 +115,12 @@ public class OmniTeleop extends OpMode {
         else{
             backRight.setPower(0);
         }
+    }
+    private void totallyRealGUI(){
+        if(rawFL>0) {
+            telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) | (%.2f)", rawFL, rawFR, rawBL, rawBR);
+
+
+
     }
 }
