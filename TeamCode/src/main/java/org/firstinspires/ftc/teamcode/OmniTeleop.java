@@ -42,7 +42,7 @@ public class OmniTeleop extends OpMode {
     public void loop() {
         normalDrive();
         grippers();
-
+        totallyRealGUI();
             //testDrive();
     }
 
@@ -50,8 +50,7 @@ public class OmniTeleop extends OpMode {
 
          forwardVector = -gamepad1.left_stick_y/3;
          strafeVector = gamepad1.left_stick_x/3;
-         rotate = gamepad1.right_stick_x/3;
-
+         rotate = gamepad1.right_stick_x/3 + (gamepad1.right_trigger - 33) - (gamepad1.left_trigger - 33);
          rawFL = forwardVector + strafeVector + rotate;
          rawFR = forwardVector - strafeVector - rotate;
          rawBL = forwardVector - strafeVector + rotate;
@@ -107,22 +106,84 @@ public class OmniTeleop extends OpMode {
         }
     }
     private void totallyRealGUI() {
-        if (rawFL > 0) {
-            if (rawFR > 0) {
-                if (rawBL > 0) {
-                    if (rawBR > 0) {
-                        telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) | (%.2f)", rawFL, rawFR, rawBL, rawBR);
-                    }
-                        else{
-                            telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) |(%.2f)", rawFL, rawFR, rawBL, rawBR);
-                        }
-                    if (rawBR > 0) {
-                        telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) | (%.2f)", rawFL, rawFR, rawBL, rawBR);
+        if (rawFL>=0){
+            if(rawFR>=0){
+                if(rawBL>=0){
+                    if(rawBR>0){
+                        telemetry.addData("motors", "\n| (%.2f) | (%.2f)\n| (%.2f) | (%.2f)", rawFL,rawFR,rawBL,rawBR);
                     }
                     else{
-                        telemetry.addData("Motors", "\n(%.2f) | (%.2f)\n(%.2f) |(%.2f)", rawFL, rawFR, rawBL, rawBR);
+                        telemetry.addData("motors", "\n| (%.2f) | (%.2f)\n| (%.2f) |(%.2f)", rawFL,rawFR,rawBL,rawBR);
                     }
 
+                }
+                else{
+                    if(rawBR>=0){
+                        telemetry.addData("motors", "\n| (%.2f) | (%.2f)\n|(%.2f) | (%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                    else{
+                        telemetry.addData("motors", "\n| (%.2f) | (%.2f)\n|(%.2f) |(%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                }
+            }
+            else{
+                if(rawBL>=0){
+                    if(rawBR>=0){
+                        telemetry.addData("motors", "\n| (%.2f) |(%.2f)\n| (%.2f) | (%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                    else{
+                        telemetry.addData("motors", "\n| (%.2f) |(%.2f)\n| (%.2f) |(%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+
+                }
+                else{
+                    if(rawBR>=0){
+                        telemetry.addData("motors", "\n| (%.2f) |(%.2f)\n|(%.2f) | (%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                    else{
+                        telemetry.addData("motors", "\n| (%.2f) |(%.2f)\n|(%.2f) |(%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                }
+            }
+
+        }
+        else{
+            if(rawFR>=0){
+                if(rawBL>=0){
+                    if(rawBR>0){
+                        telemetry.addData("motors", "\n|(%.2f) | (%.2f)\n| (%.2f) | (%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                    else{
+                        telemetry.addData("motors", "\n|(%.2f) | (%.2f)\n| (%.2f) |(%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+
+                }
+                else{
+                    if(rawBR>=0){
+                        telemetry.addData("motors", "\n|(%.2f) | (%.2f)\n|(%.2f) | (%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                    else{
+                        telemetry.addData("motors", "\n|(%.2f) | (%.2f)\n|(%.2f) |(%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                }
+            }
+            else{
+                if(rawBL>=0){
+                    if(rawBR>=0){
+                        telemetry.addData("motors", "\n|(%.2f) |(%.2f)\n| (%.2f) | (%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                    else{
+                        telemetry.addData("motors", "\n|(%.2f) |(%.2f)\n| (%.2f) |(%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+
+                }
+                else{
+                    if(rawBR>=0){
+                        telemetry.addData("motors", "\n| (%.2f) |(%.2f)\n|(%.2f) | (%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
+                    else{
+                        telemetry.addData("motors", "\n|(%.2f) |(%.2f)\n|(%.2f) |(%.2f)", rawFL,rawFR,rawBL,rawBR);
+                    }
                 }
             }
 
@@ -146,20 +207,5 @@ public class OmniTeleop extends OpMode {
         if(!Pressed){
             x=true;
         }
-
-        /*
-        if (newValue != gripper){
-            if (gripper && GL != 1.00){
-                gripperLeft.setPosition(1);
-                gripperRight.setPosition(0);
-            } else if( GR != 0.5) {
-                gripperLeft.setPosition(.5);
-                gripperRight.setPosition(.5);
-            }
-        }
-
-        gripper = newValue;
-*/
     }
-
 }
