@@ -43,6 +43,7 @@ public class OmniTeleop extends OpMode {
         normalDrive();
         grippers();
         totallyRealGUI();
+        PureBeauty();
             //testDrive();
     }
 
@@ -189,23 +190,26 @@ public class OmniTeleop extends OpMode {
 
         }
     }
-    private void toggleGripper(boolean Pressed){
+    private void toggleGripper(boolean Pressed) {
         double GL = gripperLeft.getPosition();
         double GR = gripperRight.getPosition();
 
-        if(Pressed && x){
-            x=false;
-            if (GL == .5){
+        if (Pressed && x) {
+            x = false;
+            if (GL == .5) {
                 gripperLeft.setPosition(1);
                 gripperRight.setPosition(0);
-            }
-            else if( GL == 1) {
+            } else if (GL == 1) {
                 gripperLeft.setPosition(.5);
                 gripperRight.setPosition(.5);
             }
         }
-        if(!Pressed){
-            x=true;
+        if (!Pressed) {
+            x = true;
         }
     }
+        private void PureBeauty(){
+            telemetry.addData("", "\u256D\u256E\u256D\u256E\u256D\u256E\u256D\u256E\u256D\u256E" + "\n"+ "\u2570\u256F\u2570\u256F\u2570\u256F\u2570\u256F\u2570\u256F\u2570\u256F");
+    }
+
 }
