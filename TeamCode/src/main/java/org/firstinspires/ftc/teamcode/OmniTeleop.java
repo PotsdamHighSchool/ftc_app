@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,11 +16,12 @@ public class OmniTeleop extends OpMode {
     private Servo gripperLeft, gripperRight;
 
     private double forwardVector, strafeVector, rotate;
-
+    private double gamepadLeftB, gamepadRightB;
     private double rawFL, rawFR, rawBL, rawBR;
 
     private boolean gripper;
     private boolean x=true;
+
 
     @Override
     public void init() {
@@ -43,15 +45,27 @@ public class OmniTeleop extends OpMode {
         normalDrive();
         grippers();
         totallyRealGUI();
-        PureBeauty();
             //testDrive();
     }
 
     private void normalDrive() {
+        if(gamepad1.left_bumper){
+            gamepadLeftB = .25;
+        }
+        else{
+            gamepadLeftB = 0;
+        }
+
+        if(gamepad1.right_bumper){
+            gamepadRightB = .25;
+        }
+        else{
+            gamepadRightB = 0;
+        }
 
          forwardVector = -gamepad1.left_stick_y/3;
          strafeVector = gamepad1.left_stick_x/3;
-         rotate = gamepad1.right_stick_x/3 + (gamepad1.right_trigger - 33) - (gamepad1.left_trigger - 33);
+         rotate = -(gamepadLeftB) + (gamepadRightB) + (gamepad1.right_trigger - 33) - (gamepad1.left_trigger - 33) + (gamepad1.right_stick_x/3);
          rawFL = forwardVector + strafeVector + rotate;
          rawFR = forwardVector - strafeVector - rotate;
          rawBL = forwardVector - strafeVector + rotate;
@@ -208,8 +222,6 @@ public class OmniTeleop extends OpMode {
             x = true;
         }
     }
-        private void PureBeauty(){
-            telemetry.addData("", "\u256D\u256E\u256D\u256E\u256D\u256E\u256D\u256E\u256D\u256E" + "\n"+ "\u2570\u256F\u2570\u256F\u2570\u256F\u2570\u256F\u2570\u256F\u2570\u256F");
-    }
+
 
 }
