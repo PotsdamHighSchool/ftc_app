@@ -193,7 +193,7 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
             int blue = robot.getColorSensor().blue();
             int red = robot.getColorSensor().red();
             if (red > blue && red > 20){
-                robot.driveCode(0, 0, 100);
+                robot.driveCode(0, 0, -100);
             } else if (blue > red && blue > 20){
                 robot.driveCode(0, 0, 100);
             } else robot.driveCode(0, 0, 0);
