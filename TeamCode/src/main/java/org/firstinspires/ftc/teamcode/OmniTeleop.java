@@ -3,124 +3,33 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 
 @TeleOp(name = "OmniBot")
 public class OmniTeleop extends OpMode {
-
-    private DcMotor frontLeft, frontRight, backLeft, backRight;
-    private Servo gripperLeft, gripperRight;
-
-    private double forwardVector, strafeVector, rotate;
-    private double gamepadLeftB, gamepadRightB;
-    private double rawFL, rawFR, rawBL, rawBR;
-
-    private boolean gripper;
-    private boolean x=true;
+    private VRobot robot;
 
 
     @Override
     public void init() {
 
-        frontLeft = (DcMotor) hardwareMap.get("mapFrontLeft");
-        frontRight = (DcMotor) hardwareMap.get("mapFrontRight");
-        backLeft = (DcMotor) hardwareMap.get("mapBackLeft");
-        backRight = (DcMotor) hardwareMap.get("mapBackRight");
-
-        gripperLeft = hardwareMap.servo.get("mapGripperLeft");
-        gripperRight = hardwareMap.servo.get("mapGripperRight");
-
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
+      robot = new VRobot(hardwareMap,gamepad1, gamepad2, telemetry);
 
     }
 
     @Override
     public void loop() {
-        normalDrive();
-        grippers();
-        totallyRealGUI();
+        robot.getGripperRod().setPosition(1);
+        robot.normalDrive();
+        robot.servos();
+        robot.totallyRealGUI();
+        robot.jakesBadIdea();
             //testDrive();
     }
 
-    private void normalDrive() {
-        if(gamepad1.left_bumper){
-            gamepadLeftB = .25;
-        }
-        else{
-            gamepadLeftB = 0;
-        }
-
-        if(gamepad1.right_bumper){
-            gamepadRightB = .25;
-        }
-        else{
-            gamepadRightB = 0;
-        }
-
-         forwardVector = -gamepad1.left_stick_y/3;
-         strafeVector = gamepad1.left_stick_x/3;
-         rotate = -(gamepadLeftB) + (gamepadRightB) + (gamepad1.right_trigger - 33) - (gamepad1.left_trigger - 33) + (gamepad1.right_stick_x/3);
-         rawFL = forwardVector + strafeVector + rotate;
-         rawFR = forwardVector - strafeVector - rotate;
-         rawBL = forwardVector - strafeVector + rotate;
-         rawBR = forwardVector + strafeVector - rotate;
 
 
-        frontLeft.setPower(Range.clip(-1, rawFL, 1));
-        frontRight.setPower(Range.clip(-1, rawFR, 1));
-        backLeft.setPower(Range.clip(-1, rawBL, 1));
-        backRight.setPower(Range.clip(-1, rawBR, 1));
-
-    }
-
-    private void grippers(){
-        //Gripper Servos
-
-        toggleGripper(gamepad1.a);
-
-        if (gamepad1.x){
-            gripperLeft.setPosition(1);
-            gripperRight.setPosition(0);
-        }
-        if (gamepad1.b){
-            gripperLeft.setPosition(.5);
-            gripperRight.setPosition(.5);
-        }
-    }
-
-    private void testDrive(){
-        if(gamepad1.x){
-            frontLeft.setPower(.5);
-        }
-        else{
-            frontLeft.setPower(0);
-        }
-        if(gamepad1.y){
-            frontRight.setPower(.5);
-        }
-        else{
-            frontRight.setPower(0);
-        }
-        if(gamepad1.a){
-            backLeft.setPower(.5);
-        }
-        else{
-            backLeft.setPower(0);
-        }
-        if(gamepad1.b){
-            backRight.setPower(.5);
-        }
-        else{
-            backRight.setPower(0);
-        }
-    }
-    private void totallyRealGUI() {
+    /*private void totallyRealGUI() {
         if (rawFL>=0){
             if(rawFR>=0){
                 if(rawBL>=0){
@@ -204,24 +113,8 @@ public class OmniTeleop extends OpMode {
 
         }
     }
-    private void toggleGripper(boolean Pressed) {
-        double GL = gripperLeft.getPosition();
-        double GR = gripperRight.getPosition();
+    */
 
-        if (Pressed && x) {
-            x = false;
-            if (GL == .5) {
-                gripperLeft.setPosition(1);
-                gripperRight.setPosition(0);
-            } else if (GL == 1) {
-                gripperLeft.setPosition(.5);
-                gripperRight.setPosition(.5);
-            }
-        }
-        if (!Pressed) {
-            x = true;
-        }
-    }
 
 
 }
