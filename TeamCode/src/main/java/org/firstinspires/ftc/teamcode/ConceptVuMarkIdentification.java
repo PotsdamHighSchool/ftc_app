@@ -30,6 +30,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -70,8 +74,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public class ConceptVuMarkIdentification extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
-    private VRobot robot;
     OpenGLMatrix lastLocation = null;
+
+    private DcMotor leftWheels, rightWheels;
+    private ColorSensor colorSensor;
+    private Servo gripperRod;
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -80,7 +87,14 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
     VuforiaLocalizer vuforia;
 
     @Override public void runOpMode() {
-        robot = new VRobot(hardwareMap, gamepad1, gamepad2, telemetry);
+
+        leftWheels = hardwareMap.dcMotor.get("mapLeft");
+        leftWheels.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightWheels = hardwareMap.dcMotor.get("mapRight");
+
+        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+
+        gripperRod = hardwareMap.servo.get("MattsRod");
         /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
@@ -186,17 +200,20 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
                 telemetry.addData("VuMark", "not visible");
             }
 
-            robot.gripperRod.setPosition(0);
+            gripperRod.setPosition(0);
 
-            telemetry.addData("Red: ", robot.getColorSensor().red());
-            telemetry.addData("Blue: ", robot.getColorSensor().blue());
-            int blue = robot.getColorSensor().blue();
-            int red = robot.getColorSensor().red();
+            int blue = colorSensor.blue();
+            int red = colorSensor.red();
             if (red > blue && red > 20){
-                robot.driveCode(0, 0, -100);
+                leftWheels.setPower(1);
+                rightWheels.setPower(-1);
             } else if (blue > red && blue > 20){
-                robot.driveCode(0, 0, 100);
-            } else robot.driveCode(0, 0, 0);
+                leftWheels.setPower(-1);
+                rightWheels.setPower(1);
+            } else {
+                leftWheels.setPower(0);
+                rightWheels.setPower(0);
+            }
             telemetry.update();
 
         }

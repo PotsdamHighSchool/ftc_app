@@ -20,7 +20,7 @@ public class VRobot {
     private ColorSensor colorSensor;
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
-    private Servo gripperLeft, gripperRight, gripperTest, motorPower;
+    private Servo gripperLeft, gripperRight, gripperTest, motorPower, Test2S;
     public Servo gripperRod;
 
     private double forwardVector, strafeVector, rotate;
@@ -55,7 +55,7 @@ public class VRobot {
 
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
-
+        Test2S = hardwareMap.servo.get("testS");
         gripperTest = hardwareMap.servo.get("GripperTest");
     }
     public void normalDrive() {
@@ -96,7 +96,12 @@ public class VRobot {
 
     public void servos() {
         //Gripper Servos
-
+        if(gamepad1.dpad_up){
+            Test2S.setPosition(1);
+        }
+        if(gamepad1.dpad_down){
+            Test2S.setPosition(0);
+        }
         toggleGripper(gamepad1.a);
 
         if (gamepad1.x) {
