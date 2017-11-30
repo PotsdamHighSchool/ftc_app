@@ -49,7 +49,6 @@ public class TankTeleop extends OpMode {
             gripperLeft.setPosition(1);
             gripperRight.setPosition(0);
             gripperLogic = !gripperLogic;
-
         }
         else if (gamepad2.y && gripperLogic && gripperLeft.getPosition() == 1){
             gripperLeft.setPosition(1);
