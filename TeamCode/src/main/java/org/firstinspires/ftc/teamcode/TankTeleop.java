@@ -11,7 +11,7 @@ public class TankTeleop extends OpMode {
 
     private DcMotor leftWheels, rightWheels, arm;
     private Servo gripperRod, gripperLeft, gripperRight;
-
+    private boolean gripperLogic;
 
     @Override
     public void init() {
@@ -26,6 +26,7 @@ public class TankTeleop extends OpMode {
       gripperLeft = hardwareMap.servo.get("mapGripperLeft");
       gripperRight = hardwareMap.servo.get("mapGripperRight");
 
+      gripperLogic = true;
     }
 
     @Override
@@ -43,6 +44,21 @@ public class TankTeleop extends OpMode {
             gripperRight.setPosition(.5);
         }
 
+
+        if (gamepad2.y && gripperLogic && gripperLeft.getPosition() == .5){
+            gripperLeft.setPosition(1);
+            gripperRight.setPosition(0);
+            gripperLogic = !gripperLogic;
+
+        }
+        else if (gamepad2.y && gripperLogic && gripperLeft.getPosition() == 1){
+            gripperLeft.setPosition(1);
+            gripperRight.setPosition(0);
+            gripperLogic = !gripperLogic;
+        }
+        if (!gamepad2.y){
+            gripperLogic = true;
+        }
         arm.setPower(gamepad2.left_stick_y);
     }
 }
