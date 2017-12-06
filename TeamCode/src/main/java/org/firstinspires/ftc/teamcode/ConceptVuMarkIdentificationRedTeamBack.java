@@ -50,6 +50,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * This OpMode illustrates the basics of using the Vuforia engine to determine
  * the identity of Vuforia VuMarks encountered on the field. The code is structured as
@@ -69,23 +71,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained in {@link ConceptVuforiaNavigation}.
  */
 
-@Autonomous(name="Concept: VuMark Id", group ="Concept")
+@Autonomous(name="REDTEAMBACK Concept: VuMark Id", group ="Concept")
 //@Disabled
-public class ConceptVuMarkIdentification extends LinearOpMode {
+public class ConceptVuMarkIdentificationRedTeamBack extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
     OpenGLMatrix lastLocation = null;
 
+    private Servo gripperRod;
     private DcMotor leftWheels, rightWheels;
     private ColorSensor colorSensor;
-    private Servo gripperRod;
+
+    private boolean positionBackRight = true;
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
     VuforiaLocalizer vuforia;
-
+    boolean startDetect = false;
+    boolean colorDetected = false;
     @Override public void runOpMode() {
 
         leftWheels = hardwareMap.dcMotor.get("mapLeft");
@@ -142,7 +147,6 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
         waitForStart();
 
         relicTrackables.activate();
-
         while (opModeIsActive()) {
 
             /**
@@ -155,17 +159,19 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
                 //check what is being detected
-                if(vuMark == RelicRecoveryVuMark.CENTER){
-                    //insert code for center here
-                    telemetry.addData("Center", vuMark);
-                }
-                if(vuMark == RelicRecoveryVuMark.LEFT){
-                    //insert code for left here
-                    telemetry.addData("Left", vuMark);
-                }
-                if(vuMark == RelicRecoveryVuMark.RIGHT){
-                    //insert code for right here
-                    telemetry.addData("Right", vuMark);
+                if(startDetect) {
+                    if (vuMark == RelicRecoveryVuMark.CENTER) {
+                        //insert code for center here
+                        telemetry.addData("Center", vuMark);
+                    }
+                    else if (vuMark == RelicRecoveryVuMark.LEFT) {
+                        //insert code for left here
+                        telemetry.addData("Left", vuMark);
+                    }
+                    else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+                        //insert code for right here
+                        telemetry.addData("Right", vuMark);
+                    }
                 }
 
                 /* Found an instance of the template. In the actual game, you will probably
@@ -201,23 +207,137 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
             }
 
             gripperRod.setPosition(0);
-
-            int blue = colorSensor.blue();
-            int red = colorSensor.red();
-            if (red > blue && red > 20){
-                leftWheels.setPower(1);
-                rightWheels.setPower(-1);
-            } else if (blue > red && blue > 20){
-                leftWheels.setPower(-1);
-                rightWheels.setPower(1);
-            } else {
-                leftWheels.setPower(0);
-                rightWheels.setPower(0);
+            if(!colorDetected) {
+                detectColor();
             }
             telemetry.update();
-
         }
     }
+
+    private void detectColor(){
+        if(positionBackRight){
+            colorDetected = true;
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            int blue = colorSensor.blue();
+            int red = colorSensor.red();
+
+            while (true) {
+                if (red > blue && red > 5) {
+                    leftWheels.setPower(-0.5);
+                    rightWheels.setPower(0.5);
+                    break;
+                } else if (blue > red && blue > 5) {
+                    leftWheels.setPower(0.5);
+                    rightWheels.setPower(-0.5);
+                    telemetry.addData("Debug", "Red");
+                    break;
+                }
+            }
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(900); // Main Problem
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            leftWheels.setPower(0);
+            rightWheels.setPower(0);
+            gripperRod.setPosition(1);
+            try {
+                TimeUnit.MILLISECONDS.sleep(500); // Rotate Extra for other position
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            leftWheels.setPower(.5);
+            rightWheels.setPower(.5);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(700); // Rotate Extra for other position
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            leftWheels.setPower(-.5);
+            rightWheels.setPower(.5);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            leftWheels.setPower(0);
+            rightWheels.setPower(0);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            leftWheels.setPower(.5);
+            rightWheels.setPower(.5);
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            gripperRod.setPosition(1);
+            leftWheels.setPower(0);
+            rightWheels.setPower(0);
+        }
+
+        if (!positionBackRight) {
+            colorDetected = true;
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            int blue = colorSensor.blue();
+            int red = colorSensor.red();
+
+            while (true) {
+                if (red > blue && red > 5) {
+                    leftWheels.setPower(-0.5);
+                    rightWheels.setPower(0.5);
+                    break;
+                } else if (blue > red && blue > 5) {
+                    leftWheels.setPower(0.5);
+                    rightWheels.setPower(-0.5);
+                    break;
+                }
+            }
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(900); // Main Problem
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            leftWheels.setPower(0);
+            rightWheels.setPower(0);
+
+            gripperRod.setPosition(1);
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            leftWheels.setPower(.5);
+            rightWheels.setPower(.5);
+            try {
+                TimeUnit.MILLISECONDS.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            leftWheels.setPower(0);
+            rightWheels.setPower(0);
+        }
+    }
+
 
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
